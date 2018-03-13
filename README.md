@@ -7,6 +7,8 @@
 This package provides [Brivo OnAir](http://apidocs.brivo.com/) OAuth 2.0 support for the PHP League's [OAuth 2.0 Client](https://github.com/thephpleague/oauth2-client).
 
 
+**This repo should be considered unstable until v1.0.0**
+
 ## Installation
 
 To install, use composer:
@@ -17,24 +19,24 @@ $ composer require drewhammond/oauth2-brivo
 
 ## Usage
 
-The example below is taken from a Laravel project with the `BRIVO_API_KEY`, `BRIVO_CLIENT_ID` and `BRIVO_CLIENT_SECRET` defined in the project .env file.
+The example below is taken from a Laravel project with the `BRIVO_CLIENT_ID` and `BRIVO_CLIENT_SECRET` defined in the project .env file.
 
 
 ```php
+$provider = new \Drewhammond\OAuth2\Client\Provider\Brivo([
+	'clientId'     => getenv('BRIVO_CLIENT_ID'),
+	'clientSecret' => getenv('BRIVO_CLIENT_SECRET'),
+]);
 
-  // Instantiate Availity provider
-  $provider = new \Drewhammond\OAuth2\Client\Provider\Availity( [
-    'clientId'     => getenv( 'AVAILITY_CLIENT_ID' ),
-    'clientSecret' => getenv( 'AVAILITY_CLIENT_SECRET' ),
-  ] );
+// Using the password grant type
+$accessToken = $provider->getAccessToken('password', [
+	'username' => getenv('BRIVO_USERNAME'),
+	'password' => getenv('BRIVO_PASSWORD'),
+]);
 
-  // Fetch access token using client_credentials grant (only grant type supported by Availity)
-  $accessToken = $provider->getAccessToken( 'client_credentials' );
-
-  // Do something with your access token...
-  $token   = $accessToken->getToken();
-  $expires = $accessToken->getExpires();
-
+// Do something with your access token...
+$token = $accessToken->getToken();
+$expires = $accessToken->getExpires();
 ```
 
 ## Support

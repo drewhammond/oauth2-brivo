@@ -36,8 +36,8 @@ class BrivoTest extends TestCase
         $timestamp = time();
 
         $response = mock::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('getBody')->andReturn('{"token_type":"bearer","access_token":"TEST_ACCESS_TOKEN_VALUE","expires_in": 300,"consented_on":' . $timestamp . '}');
-        $response->shouldReceive('getHeader')->andReturn(['content-type' => 'application/json']);
+        $response->shouldReceive('getBody')->andReturn('{"access_token":"TEST_ACCESS_TOKEN_VALUE","token_type":"bearer","refresh_token":"TEST_REFRESH_TOKEN_VALUE","expires_in":59,"scope":"brivo.api","jti":"00000000-a0a0-a0a0-a0a0-000000000000"}');
+        $response->shouldReceive('getHeader')->andReturn(['content-type' => 'application/json;charset=UTF-8']);
         $response->shouldReceive('getStatusCode')->andReturn(200);
         $client = mock::mock('GuzzleHttp\ClientInterface');
         $client->shouldReceive('send')->times(1)->andReturn($response);
@@ -45,9 +45,13 @@ class BrivoTest extends TestCase
         $token = $this->provider->getAccessToken('client_credentials');
 
         $this->assertEquals('TEST_ACCESS_TOKEN_VALUE', $token->getToken());
-        $this->assertEquals($timestamp + 300, $token->getExpires());
+        $this->assertEquals('TEST_REFRESH_TOKEN_VALUE', $token->getRefreshToken());
+        $this->assertEquals($timestamp + 59, $token->getExpires());
+
+        $this->assertEquals('brivo.api', $token->getValues()['scope']);
+        $this->assertEquals('00000000-a0a0-a0a0-a0a0-000000000000', $token->getValues()['jti']);
+        $this->assertEquals('bearer', $token->getValues()['token_type']);
         $this->assertFalse($token->hasExpired());
-        $this->assertNull($token->getRefreshToken());
         $this->assertNull($token->getResourceOwnerId());
     }
 
@@ -62,7 +66,7 @@ class BrivoTest extends TestCase
      */
     public function testGetBaseAuthorizationUrl()
     {
-        $this->assertEquals('https://auth.brivo.com/oauth/token', $this->provider->getBaseAuthorizationUrl());
+        $this->assertEquals('https://auth.brivo.com/oauth/authorize', $this->provider->getBaseAuthorizationUrl());
     }
 
     /**

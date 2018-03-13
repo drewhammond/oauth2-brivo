@@ -19,7 +19,7 @@ class Brivo extends AbstractProvider
      */
     public function getBaseAuthorizationUrl()
     {
-        // TODO: Implement getBaseAuthorizationUrl() method.
+        return 'https://auth.brivo.com/oauth/authorize';
     }
 
     /**
@@ -33,7 +33,7 @@ class Brivo extends AbstractProvider
      */
     public function getBaseAccessTokenUrl(array $params)
     {
-        // TODO: Implement getBaseAccessTokenUrl() method.
+        return 'https://auth.brivo.com/oauth/token';
     }
 
     /**
@@ -45,7 +45,7 @@ class Brivo extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        // TODO: Implement getResourceOwnerDetailsUrl() method.
+        return '';
     }
 
     /**
@@ -58,7 +58,7 @@ class Brivo extends AbstractProvider
      */
     protected function getDefaultScopes()
     {
-        // TODO: Implement getDefaultScopes() method.
+        return ['brivo.api'];
     }
 
     /**
@@ -73,7 +73,10 @@ class Brivo extends AbstractProvider
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
-        // TODO: Implement checkResponse() method.
+        $status = $response->getStatusCode();
+        if ($status >= 400) {
+            throw new IdentityProviderException($data['error'] ?: $response->getReasonPhrase(), $status, $response);
+        }
     }
 
     /**
@@ -87,6 +90,30 @@ class Brivo extends AbstractProvider
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        // TODO: Implement createResourceOwner() method.
+        return null;
+    }
+
+    /**
+     * Requests an access token using a specified grant and option set.
+     *
+     * @param  mixed $grant
+     * @param  array $options
+     *
+     * @return AccessToken
+     */
+    public function getAccessToken($grant, array $options = [])
+    {
+        $grant    = $this->verifyGrant($grant);
+        $params   = [
+            'client_id'     => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'redirect_uri'  => $this->redirectUri,
+        ];
+        $params   = $grant->prepareRequestParameters($params, $options);
+        $request  = $this->getAccessTokenRequest($params);
+        $response = $this->getParsedResponse($request);
+        $token    = $this->createAccessToken($response, $grant);
+
+        return $token;
     }
 }
