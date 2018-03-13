@@ -13,8 +13,6 @@ class Brivo extends AbstractProvider
     /**
      * Returns the base URL for authorizing a client.
      *
-     * Eg. https://oauth.service.com/authorize
-     *
      * @return string
      */
     public function getBaseAuthorizationUrl()
@@ -24,8 +22,6 @@ class Brivo extends AbstractProvider
 
     /**
      * Returns the base URL for requesting an access token.
-     *
-     * Eg. https://oauth.service.com/token
      *
      * @param array $params
      *
