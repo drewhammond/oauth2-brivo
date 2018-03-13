@@ -2,6 +2,12 @@
     "name": "drewhammond/oauth2-brivo",
     "description": "Brivo Provider for OAuth2 client",
     "license": "MIT",
+    "keywords": [
+        "oauth",
+        "oauth2",
+        "brivo"
+    ],
+    "homepage": "https://github.com/drewhammond/oauth2-brivo",
     "authors": [
         {
             "name": "Drew Hammond",
