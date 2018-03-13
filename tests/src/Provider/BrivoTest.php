@@ -33,8 +33,6 @@ class BrivoTest extends TestCase
 
     public function testGetAccessToken()
     {
-        $timestamp = time();
-
         $response = mock::mock('Psr\Http\Message\ResponseInterface');
         $response->shouldReceive('getBody')->andReturn('{"access_token":"TEST_ACCESS_TOKEN_VALUE","token_type":"bearer","refresh_token":"TEST_REFRESH_TOKEN_VALUE","expires_in":59,"scope":"brivo.api","jti":"00000000-a0a0-a0a0-a0a0-000000000000"}');
         $response->shouldReceive('getHeader')->andReturn(['content-type' => 'application/json;charset=UTF-8']);
@@ -43,10 +41,10 @@ class BrivoTest extends TestCase
         $client->shouldReceive('send')->times(1)->andReturn($response);
         $this->provider->setHttpClient($client);
         $token = $this->provider->getAccessToken('client_credentials');
+        $this->assertEquals(time() + 59, $token->getExpires());
 
         $this->assertEquals('TEST_ACCESS_TOKEN_VALUE', $token->getToken());
         $this->assertEquals('TEST_REFRESH_TOKEN_VALUE', $token->getRefreshToken());
-        $this->assertEquals($timestamp + 59, $token->getExpires());
 
         $this->assertEquals('brivo.api', $token->getValues()['scope']);
         $this->assertEquals('00000000-a0a0-a0a0-a0a0-000000000000', $token->getValues()['jti']);
