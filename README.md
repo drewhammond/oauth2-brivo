@@ -6,9 +6,6 @@
 
 This package provides [Brivo OnAir](http://apidocs.brivo.com/) OAuth 2.0 support for the PHP League's [OAuth 2.0 Client](https://github.com/thephpleague/oauth2-client).
 
-
-**This repo should be considered unstable until v1.0.0**
-
 ## Installation
 
 To install, use composer:
