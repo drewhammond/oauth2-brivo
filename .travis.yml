@@ -1,0 +1,23 @@
+language: php
+
+matrix:
+    include:
+        - php: 7.1
+        - php: 7.2
+    fast_finish: true
+
+before_install:
+  - travis_retry composer self-update
+
+install:
+  - travis_retry composer install --no-interaction --prefer-source
+
+before_script:
+  - mkdir -p build/logs
+
+script:
+  - ./vendor/bin/phpcs --standard=psr2 src/
+  - ./vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml
+
+after_success:
+  - travis_retry php vendor/bin/coveralls
